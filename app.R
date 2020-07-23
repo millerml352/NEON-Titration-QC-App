@@ -94,7 +94,7 @@ ui <- fluidPage(
             
             br(),
             # neon logo
-            img(src = "neon.png", height = 'auto', width = "80%"),
+            img(src = "neon.png", height = 'auto', width = "70%"),
             
             br(),
             # shiny tm
@@ -122,7 +122,7 @@ ui <- fluidPage(
                 p("Please reference the table below from the SWC protocol for recommended sample volume and titrant normality."),
             
             # SWC protocol table
-            div(img(src = "titrationVolumesKBA.png", height = "auto", width = "60%"), style="text-align: center"),
+            div(img(src = "titrationVolumesKBA.png", height = "auto", width = "75%"), style="text-align: center"),
             
             h2("Plot"),
 
@@ -151,11 +151,12 @@ ui <- fluidPage(
                 )  
             ),
             fluidRow(
-                column(6, 
+                column(12, 
                        # output plot1
                        plotOutput(outputId = "plot1")
                        ),
-                column(6,
+                br(),
+                column(12,
                        # output plot2
                        plotOutput(outputId = "plot2")
                        )
@@ -167,11 +168,12 @@ ui <- fluidPage(
                 )  
             ),
             fluidRow(
-                column(6, 
+                column(12, 
                        # output plot3
                        plotOutput(outputId = "plot3")
                        ),
-                column(6, 
+                br(),
+                column(12, 
                        # output plot4
                        plotOutput(outputId = "plot4")
                        )
@@ -246,16 +248,16 @@ server <- function(input, output, session) {
         # render site ALK meq/l
         output$plot1 <- renderPlot({
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMeqPerL)) +
-                geom_point(aes(color = factor(sampleVolume))) +
+                geom_point(size = 3, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 #meq/l thresholds from table
                 geom_abline(slope = 0, intercept = 1, color = 'red') +
                 geom_abline(slope = 0, intercept = 4, color = 'red') +
                 geom_abline(slope = 0, intercept = 20, color = 'red') +
                 labs(title = "Alkalinity, milliequivalents per liter",
-                     x = "Titraton Date",
+                     x = "Titration Date",
                      y = "ALK mEq/L") +
-                scale_x_datetime(date_breaks = "4 months") +
+                scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(), 
                       text = element_text(size = 14), 
@@ -264,15 +266,16 @@ server <- function(input, output, session) {
         # render site ANC meq/l
         output$plot2 <- renderPlot({
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMeqPerL)) +
-                geom_point(aes(color = factor(sampleVolume))) +
+                geom_point(size = 3, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 #meq/l thresholds from table
                 geom_abline(slope = 0, intercept = 1, color = 'red') +
                 geom_abline(slope = 0, intercept = 4, color = 'red') +
                 geom_abline(slope = 0, intercept = 20, color = 'red') +
                 labs(title = "Acid-neutralizing capacity, milliequivalents per liter",
-                     x = "Titraton Date",
+                     x = "Titration Date",
                      y = "ANC mEq/L") +
+                scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
@@ -282,14 +285,15 @@ server <- function(input, output, session) {
         # render site ALK mg/l
         output$plot3 <- renderPlot({
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMgPerL)) +
-                geom_point(aes(color = factor(sampleVolume))) +
+                geom_point(size = 3, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
                 geom_abline(slope = 0, intercept = 1000, color = 'red') +
                 labs(title = "Alkalinity, milligrams per liter",
-                     x = "Titraton Date",
+                     x = "Titration Date",
                      y = "ALK mg/L") +
+                scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
@@ -299,14 +303,15 @@ server <- function(input, output, session) {
         # render site ANC mg/l
         output$plot4 <- renderPlot({
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMgPerL)) +
-                geom_point(aes(color = factor(sampleVolume))) +
+                geom_point(size = 3, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
                 geom_abline(slope = 0, intercept = 1000, color = 'red') +
                 labs(title = "Acid-neutralizing capacity, milligrams per liter",
-                     x = "Titraton Date",
+                     x = "Titration Date",
                      y = "ANC mg/L") +
+                scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14), 
