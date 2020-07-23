@@ -8,6 +8,9 @@ library(tidyverse)
 # Define UI
 ui <- fluidPage(
     
+    # javaScript library for debugging alerts
+    tags$head(tags$script(src = "message-handler.js")),
+    
     titlePanel("Plot Lab Titration Values"),
     
     # Sidebar
@@ -17,6 +20,7 @@ ui <- fluidPage(
             
             helpText("Select site, date range, and which sample types and units you would like to view."),
             
+            # site selection
             selectInput(inputId = "siteInput",
                         label = "Select a siteID",
                         choices = c(" ","ARIK","BARC","BIGC","BLDE","BLUE","BLWA","CARI","COMO","CRAM",
@@ -32,6 +36,10 @@ ui <- fluidPage(
         #     start = Sys.Date() - 2, end = Sys.Date() + 2
         # ),
             
+            # start date selection
+            # loadByProduct() only takes YYYY-MM, changing format here will change what displays to the user
+            # but it doesnt actually change what is passed to the functions
+            # hard-coded to substr()[1,7] in server-side
             dateInput(inputId = "startDateInput",
                       label="Start Date",
                       value=Sys.Date()-2,
@@ -43,6 +51,8 @@ ui <- fluidPage(
                       language= "en",
                       width='80%'),
             
+            # end date selection
+            # same issue as start :/
             dateInput(inputId = "endDateInput",
                       label="End Date",
                       min="2010-01-01",
@@ -54,10 +64,11 @@ ui <- fluidPage(
                       width='80%'),
             
             br(),
-            
-            # maybe just display all 4 plots? already made the request might as well plot em
-            # instead of downloading again
-            # 
+        
+            # initially wanted to give the option to plot ALK or ANC or both, and meq/l or mg/l or both
+            # now just plotting all options for each site/date combination to reduce unnecessary requests to
+            # loadbyproduct API
+            #
             # checkboxGroupInput(inputId = "sampleTypeInput",
             #                    h5("Sample Type"),
             #                    choices = list("ALK" = "alk",
@@ -70,8 +81,6 @@ ui <- fluidPage(
             #                                   "mg/L" = "milligrams"),
             #                    selected = "equivalents"),
             
-            # some javaScrippp for debugging alerts
-            tags$head(tags$script(src = "message-handler.js")),
             # executes getData function using loadByProduct()
             actionButton("get", label = "Retrieve Data", width="120px"),
             
@@ -91,6 +100,8 @@ ui <- fluidPage(
             # shiny tm
             "Shiny is a product of ",
             span("RStudio", style = "color:blue")
+        
+            
         ),
         
         # Main Panel
@@ -199,10 +210,8 @@ server <- function(input, output, session) {
     })
     
     # define getData function to be called when user presses retrieve button
-    
-    #######
-    # chemData and Frame is being superassigned to the .GlobalEnv here, cant do that if hosting or
-    # df will be shared between users
+    ### chemData and chemDataFrame is being superassigned to the .GlobalEnv here to escape function scope
+    ### cant do that if hosting live or first generated df will be shared between users
     getData <- function() {
         chemData <<- loadByProduct(dpID=c("DP1.20093.001"),
                                 dataInputs(),
