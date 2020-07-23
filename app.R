@@ -124,8 +124,6 @@ ui <- fluidPage(
             # SWC protocol table
             div(img(src = "titrationVolumesKBA.png", height = "auto", width = "60%"), style="text-align: center"),
             
-            br(),
-            
             h2("Plot"),
 
             # headers to verify sidebar selections are outputting correctly
@@ -247,31 +245,72 @@ server <- function(input, output, session) {
         # hardcode for BIGC first, then create a plot function that can accept the reactive inputs from above
         # render site ALK meq/l
         output$plot1 <- renderPlot({
-            plot(alkMeqPerL~titrationDate, 
-                 data = chemDataFrame[which(chemDataFrame$sampleType=="ALK" & chemDataFrame$siteID=="BIGC"),],
-                 type="b", main = "BIGC ALK Values", sub = date())
-            abline(h = 1, col = 'red')
+            ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMeqPerL)) +
+                geom_point(aes(color = factor(sampleVolume))) +
+                geom_line() +
+                #meq/l thresholds from table
+                geom_abline(slope = 0, intercept = 1, color = 'red') +
+                geom_abline(slope = 0, intercept = 4, color = 'red') +
+                geom_abline(slope = 0, intercept = 20, color = 'red') +
+                labs(title = "Alkalinity, milliequivalents per liter",
+                     x = "Titraton Date",
+                     y = "ALK mEq/L") +
+                scale_x_datetime(date_breaks = "4 months") +
+                theme_bw() +
+                theme(legend.title = element_blank(), 
+                      text = element_text(size = 14), 
+                      axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
         })
         # render site ANC meq/l
         output$plot2 <- renderPlot({
-            plot(ancMeqPerL~titrationDate, 
-                 data = chemDataFrame[which(chemDataFrame$sampleType=="ANC" & chemDataFrame$siteID=="BIGC"),],
-                 type="b", main = "BIGC ANC Values", sub = date())
-            abline(h = 1, col = 'red')
+            ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMeqPerL)) +
+                geom_point(aes(color = factor(sampleVolume))) +
+                geom_line() +
+                #meq/l thresholds from table
+                geom_abline(slope = 0, intercept = 1, color = 'red') +
+                geom_abline(slope = 0, intercept = 4, color = 'red') +
+                geom_abline(slope = 0, intercept = 20, color = 'red') +
+                labs(title = "Acid-neutralizing capacity, milliequivalents per liter",
+                     x = "Titraton Date",
+                     y = "ANC mEq/L") +
+                theme_bw() +
+                theme(legend.title = element_blank(),
+                      text = element_text(size = 14),
+                      axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
+            
         })
         # render site ALK mg/l
         output$plot3 <- renderPlot({
-            plot(alkMgPerL~titrationDate, 
-                 data = chemDataFrame[which(chemDataFrame$sampleType=="ALK" & chemDataFrame$siteID=="BIGC"),],
-                 type="b", main = "BIGC ALK Values", sub = date())
-            abline(h = 1, col = 'red')
+            ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMgPerL)) +
+                geom_point(aes(color = factor(sampleVolume))) +
+                geom_line() +
+                geom_abline(slope = 0, intercept = 50, color = 'red') +
+                geom_abline(slope = 0, intercept = 200, color = 'red') +
+                geom_abline(slope = 0, intercept = 1000, color = 'red') +
+                labs(title = "Alkalinity, milligrams per liter",
+                     x = "Titraton Date",
+                     y = "ALK mg/L") +
+                theme_bw() +
+                theme(legend.title = element_blank(),
+                      text = element_text(size = 14),
+                      axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
+            
         })
         # render site ANC mg/l
         output$plot4 <- renderPlot({
-            plot(ancMgPerL~titrationDate, 
-                 data = chemDataFrame[which(chemDataFrame$sampleType=="ANC" & chemDataFrame$siteID=="BIGC"),],
-                 type="b", main = "BIGC ANC Values", sub = date())
-            abline(h = 1, col = 'red')
+            ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMgPerL)) +
+                geom_point(aes(color = factor(sampleVolume))) +
+                geom_line() +
+                geom_abline(slope = 0, intercept = 50, color = 'red') +
+                geom_abline(slope = 0, intercept = 200, color = 'red') +
+                geom_abline(slope = 0, intercept = 1000, color = 'red') +
+                labs(title = "Acid-neutralizing capacity, milligrams per liter",
+                     x = "Titraton Date",
+                     y = "ANC mg/L") +
+                theme_bw() +
+                theme(legend.title = element_blank(),
+                      text = element_text(size = 14), 
+                      axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
         })
     })
 }
