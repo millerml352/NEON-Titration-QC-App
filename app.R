@@ -3,7 +3,6 @@ library(shiny)
 library(neonUtilities)
 library(data.table)
 library(tidyverse)
-#library(rlang)
 #library(plotly)
 
 # Define UI
@@ -20,15 +19,14 @@ ui <- fluidPage(
             
             selectInput(inputId = "siteInput",
                         label = "Select a siteID",
-                        choices = c(" ","ARIK","BARC","BIGC","BLWA","BLDE","BLUE","CARI","COMO","CRAM",
+                        choices = c(" ","ARIK","BARC","BIGC","BLDE","BLUE","BLWA","CARI","COMO","CRAM",
                                     "CUPE","FLNT","GUIL","KING","LECO","LEWI","LIRO","HOPB","MART",
-                                    "MAYF","MCDI","MCRA","OKSR","POSE","PRLA","PRPO","PRIN","REDB",
+                                    "MAYF","MCDI","MCRA","OKSR","POSE","PRIN","PRLA","PRPO","REDB",
                                     "SUGG","SYCA","TECR","TOMB","TOOK","WALK","WLOU"),
                         selected = " ",
                         width = '60%'),
             
-        # single date range input form, unsure how to access start and end separately
-
+        # single date range input form accessed w/: from <-  input[1], to <- input[2]
         # dateRangeInput('dateRange',
         #     label = 'Date range input: yyyy-mm-dd',
         #     start = Sys.Date() - 2, end = Sys.Date() + 2
@@ -43,7 +41,7 @@ ui <- fluidPage(
                       startview = "month",
                       weekstart = 0,
                       language= "en",
-                      width='80%'), #try yyyy-mm at some point
+                      width='80%'),
             
             dateInput(inputId = "endDateInput",
                       label="End Date",
@@ -72,27 +70,25 @@ ui <- fluidPage(
             #                                   "mg/L" = "milligrams"),
             #                    selected = "equivalents"),
             
-            # Load enough JavaScripppp to make this work
-            # Just for message alerts/debugging
+            # some javaScrippp for debugging alerts
             tags$head(tags$script(src = "message-handler.js")),
+            # executes getData function using loadByProduct()
             actionButton("get", label = "Retrieve Data", width="120px"),
-            # on click run a function that executes the loadByProduct sequence
-            # figure out scope for variables
             
             br(),
             
             br(),
-            
+            # executes plot function tbd
             actionButton("plot", label = "Plot Data", width="120px"),
             
             br(),
             
             br(),
-            
+            # neon logo
             img(src = "neon.png", height = 'auto', width = "80%"),
             
             br(),
-            
+            # shiny tm
             "Shiny is a product of ",
             span("RStudio", style = "color:blue")
         ),
@@ -114,13 +110,14 @@ ui <- fluidPage(
             
                 p("Please reference the table below from the SWC protocol for recommended sample volume and titrant normality."),
             
+            # SWC protocol table
             div(img(src = "titrationVolumesKBA.png", height = "auto", width = "60%"), style="text-align: center"),
             
             br(),
             
             h2("Plot"),
 
-            # headers to verify sidebar selections are correct
+            # headers to verify sidebar selections are outputting correctly
             fluidRow(
                 column(12,
                        h4("Headers")
@@ -154,7 +151,6 @@ ui <- fluidPage(
                        plotOutput(outputId = "plot2")
                        )
             ),
-            
             # plot ALK and ANC in mg/L 6 col ea
             fluidRow(
                 column(12,
@@ -171,11 +167,8 @@ ui <- fluidPage(
                        plotOutput(outputId = "plot4")
                        )
             )
-            
         )
-        
     )
-   
 )
 br()
 
@@ -193,8 +186,6 @@ server <- function(input, output, session) {
         paste("Start:", substr(as.character(input$startDateInput),1,7))
     })
     
-   # substr(as.character(x2), 1, 7)
-    
     # output selected end date to header row
     output$endDate <- renderText({
         paste("End:", substr(as.character(input$endDateInput),1,7))
@@ -208,10 +199,10 @@ server <- function(input, output, session) {
     })
     
     # define getData function to be called when user presses retrieve button
+    
     #######
-    # chemData is being superassigned to the .GlobalEnv here (because I can't figure out scoping)
-    # that will have to be refactored for a production environment to avoid sharing of
-    # global environment variables between users during the same "session"
+    # chemData and Frame is being superassigned to the .GlobalEnv here, cant do that if hosting or
+    # df will be shared between users
     getData <- function() {
         chemData <<- loadByProduct(dpID=c("DP1.20093.001"),
                                 dataInputs(),
@@ -222,21 +213,8 @@ server <- function(input, output, session) {
         
         # extract swc_domainLabData dataframe out
         chemDataFrame <<- chemData$swc_domainLabData
-        
-    # figure out how to work with df rather than exporting variables to global env, function waits until app ends to set globalenv anyways 
-    
-    # list2env(df, envir=.GlobalEnv)
-        
-    # titrationValues <- swc_domainLabData
     }
-    
-    # extract swc_domainLabData dataframe out
-    #chemDataFrame <- chemData$swc_domainLabData
-    
-    
 
-    
-    
     # debugging JS alert from retrieve button
     observeEvent(input$get, {
         session$sendCustomMessage(type = 'testmessage',
@@ -287,32 +265,6 @@ server <- function(input, output, session) {
             abline(h = 1, col = 'red')
         })
     })
-
-    # # Retrieve selected siteID via reactive expression
-    # # store selected siteID as a one-item character vector to use in loadByProduct
-    # selectedSite <- reactive({
-    #     c(input$siteInput)
-    # })
-    
-    # # retrieve startDateInput
-    # selectedStart <- reactive ({
-    #     c(input$startDateInput)
-    # })
-    # 
-    #     # Send to UI startInput
-    #     output$text2 <- renderText({
-    #         selectedStart()
-    #     })    
-    #     
-    # # retrieve endDateInput
-    # selectedEnd <- reactive ({
-    #     c(input$endDateInput)
-    # })
-    # 
-    #     # Send to UI startInput
-    #     output$text3 <- renderText({
-    #         selectedEnd()
-    #     })
 }
 # Run the app ----
 shinyApp(ui = ui, server = server)
