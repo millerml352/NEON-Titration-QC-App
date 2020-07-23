@@ -3,7 +3,7 @@ library(shiny)
 library(neonUtilities)
 library(data.table)
 library(tidyverse)
-#library(plotly)
+library(plotly)
 
 # Define UI
 ui <- fluidPage(
@@ -147,35 +147,37 @@ ui <- fluidPage(
             # plot ALK and ANC in mEq/L 6 col ea
             fluidRow(
                 column(12,
-                       h3("Plots (mEq/L)")
+                       h3(
+                           strong("Plots (mEq/L)"))
                 )  
             ),
             fluidRow(
                 column(12, 
                        # output plot1
-                       plotOutput(outputId = "plot1")
+                       plotlyOutput(outputId = "plot1")
                        ),
                 br(),
                 column(12,
                        # output plot2
-                       plotOutput(outputId = "plot2")
+                       plotlyOutput(outputId = "plot2")
                        )
             ),
             # plot ALK and ANC in mg/L 6 col ea
             fluidRow(
                 column(12,
-                       h3("Plots (mg/L)")
+                       h3(
+                           strong("Plots (mg/L)"))
                 )  
             ),
             fluidRow(
                 column(12, 
                        # output plot3
-                       plotOutput(outputId = "plot3")
+                       plotlyOutput(outputId = "plot3")
                        ),
                 br(),
                 column(12, 
                        # output plot4
-                       plotOutput(outputId = "plot4")
+                       plotlyOutput(outputId = "plot4")
                        )
             )
         )
@@ -246,15 +248,17 @@ server <- function(input, output, session) {
     observeEvent(input$plot, {
         # hardcode for BIGC first, then create a plot function that can accept the reactive inputs from above
         # render site ALK meq/l
-        output$plot1 <- renderPlot({
+        output$plot1 <- renderPlotly({
+            print(
+            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMeqPerL)) +
-                geom_point(size = 3, aes(color = factor(sampleVolume))) +
+                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 #meq/l thresholds from table
                 geom_abline(slope = 0, intercept = 1, color = 'red') +
                 geom_abline(slope = 0, intercept = 4, color = 'red') +
                 geom_abline(slope = 0, intercept = 20, color = 'red') +
-                labs(title = "Alkalinity, milliequivalents per liter",
+                labs(title = "Alkalinity",
                      x = "Titration Date",
                      y = "ALK mEq/L") +
                 scale_x_datetime(date_breaks = "6 months") +
@@ -262,17 +266,21 @@ server <- function(input, output, session) {
                 theme(legend.title = element_blank(), 
                       text = element_text(size = 14), 
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
+            )
+            )
         })
         # render site ANC meq/l
-        output$plot2 <- renderPlot({
+        output$plot2 <- renderPlotly({
+            print(
+            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMeqPerL)) +
-                geom_point(size = 3, aes(color = factor(sampleVolume))) +
+                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 #meq/l thresholds from table
                 geom_abline(slope = 0, intercept = 1, color = 'red') +
                 geom_abline(slope = 0, intercept = 4, color = 'red') +
                 geom_abline(slope = 0, intercept = 20, color = 'red') +
-                labs(title = "Acid-neutralizing capacity, milliequivalents per liter",
+                labs(title = "Acid-neutralizing capacity",
                      x = "Titration Date",
                      y = "ANC mEq/L") +
                 scale_x_datetime(date_breaks = "6 months") +
@@ -280,17 +288,20 @@ server <- function(input, output, session) {
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
-            
+            )
+            )
         })
         # render site ALK mg/l
-        output$plot3 <- renderPlot({
+        output$plot3 <- renderPlotly({
+            print(
+            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMgPerL)) +
-                geom_point(size = 3, aes(color = factor(sampleVolume))) +
+                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
                 geom_abline(slope = 0, intercept = 1000, color = 'red') +
-                labs(title = "Alkalinity, milligrams per liter",
+                labs(title = "Alkalinity",
                      x = "Titration Date",
                      y = "ALK mg/L") +
                 scale_x_datetime(date_breaks = "6 months") +
@@ -298,17 +309,20 @@ server <- function(input, output, session) {
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
-            
+            )
+            )
         })
         # render site ANC mg/l
-        output$plot4 <- renderPlot({
+        output$plot4 <- renderPlotly({
+            print(
+            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMgPerL)) +
-                geom_point(size = 3, aes(color = factor(sampleVolume))) +
+                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
                 geom_abline(slope = 0, intercept = 1000, color = 'red') +
-                labs(title = "Acid-neutralizing capacity, milligrams per liter",
+                labs(title = "Acid-neutralizing capacity",
                      x = "Titration Date",
                      y = "ANC mg/L") +
                 scale_x_datetime(date_breaks = "6 months") +
@@ -316,7 +330,9 @@ server <- function(input, output, session) {
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14), 
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
-        })
+                )
+                )
+            })
     })
 }
 # Run the app ----
