@@ -22,9 +22,12 @@ To Address a/o 20200727
 
     1a. Data frame is superassigned to global env, would be shared between users if not restarted between each "session"
     
-    1b. Might need some kind of R markdown index file? Attempted to practice host via shinyapps.io and couldn't because of that. Hard to tell, quite sure Cody or Jim could answer that though
+    1b. Might need some kind of R markdown index file OR split into ui.R server.R and global.R? Attempted to test host via shinyapps.io and couldn't run. Hard to tell, quite sure Cody or Jim could answer that quickly though
   
-2. DRY out the plot code - working on a looping plot function in dev repo rather than four semi-hard coded plot expressions
+2. DRY out the plot code - working on looping plot function in dev repo rather than four semi-hard coded plot expressions. Should speed up processing time
 
-3. Button or at least capability to export plots; probably would work with either plotly or ggplot2
-  
+3. Button or capability to export plots (right-click save does not work atm easy fix); probably would work with either plotly or ggplot2
+
+4. Deal with skipping rows due to NAs in non-vital columns e.g. POSE fall 2019 skipping observations and disconnected plot due to NAs in initialSamplePh column
+
+5. Progress indicator of some sort for "Retrieve Data" button
