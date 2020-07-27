@@ -107,7 +107,7 @@ ui <- fluidPage(
         # Main Panel
         mainPanel(
             
-            h1("Is water wet? ", strong("Hell yeah it is!")),
+            h1("Is water wet? "),
             
                 p("This app uses the ",
                   
