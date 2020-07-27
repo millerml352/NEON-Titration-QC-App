@@ -1,5 +1,7 @@
 # NEON Plot Titration Data App
+
 Matthew Miller
+
 D17 Pacific Southwest
 
 This app is intended to provide a quick way of visualizing domain level titration data.
