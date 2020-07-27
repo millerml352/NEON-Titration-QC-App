@@ -172,12 +172,12 @@ ui <- fluidPage(
             fluidRow(
                 column(12, 
                        # output plot3
-                       plotlyOutput(outputId = "plot3")
+                       plotOutput(outputId = "plot3")
                        ),
                 br(),
                 column(12, 
                        # output plot4
-                       plotlyOutput(outputId = "plot4")
+                       plotOutput(outputId = "plot4")
                        )
             )
         )
@@ -292,11 +292,10 @@ server <- function(input, output, session) {
             )
         })
         # render site ALK mg/l
-        output$plot3 <- renderPlotly({
+        output$plot3 <- renderPlot({
             print(
-            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ALK"),], mapping = aes(x = titrationDate, y = alkMgPerL)) +
-                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
+                geom_point(size = 2, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
@@ -310,14 +309,12 @@ server <- function(input, output, session) {
                       text = element_text(size = 14),
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
             )
-            )
         })
         # render site ANC mg/l
-        output$plot4 <- renderPlotly({
+        output$plot4 <- renderPlot({
             print(
-            ggplotly(
             ggplot(data = chemDataFrame[which(chemDataFrame$sampleType=="ANC"),], mapping = aes(x = titrationDate, y = ancMgPerL)) +
-                geom_point(size = 1.5, aes(color = factor(sampleVolume))) +
+                geom_point(size = 2, aes(color = factor(sampleVolume))) +
                 geom_line() +
                 geom_abline(slope = 0, intercept = 50, color = 'red') +
                 geom_abline(slope = 0, intercept = 200, color = 'red') +
@@ -330,7 +327,6 @@ server <- function(input, output, session) {
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14), 
                       axis.text.x = element_text(angle=45, vjust=1.0, hjust=1.0))
-                )
                 )
             })
     })
