@@ -129,7 +129,7 @@ ui <- fluidPage(
             # headers to verify sidebar selections are outputting correctly
             fluidRow(
                 column(12,
-                       h4("Headers")
+                       h4("Selections")
                 )  
             ),
             fluidRow(
@@ -261,7 +261,7 @@ server <- function(input, output, session) {
                 labs(title = "Alkalinity",
                      x = "Titration Date",
                      y = "ALK mEq/L") +
-                scale_x_datetime(date_breaks = "6 months") +
+                scale_x_datetime(date_breaks = "3 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(), 
                       text = element_text(size = 14), 
@@ -283,7 +283,7 @@ server <- function(input, output, session) {
                 labs(title = "Acid-neutralizing capacity",
                      x = "Titration Date",
                      y = "ANC mEq/L") +
-                scale_x_datetime(date_breaks = "6 months") +
+                #scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
@@ -303,7 +303,7 @@ server <- function(input, output, session) {
                 labs(title = "Alkalinity",
                      x = "Titration Date",
                      y = "ALK mg/L") +
-                scale_x_datetime(date_breaks = "6 months") +
+                #scale_x_datetime(date_breaks = "6 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14),
@@ -322,7 +322,7 @@ server <- function(input, output, session) {
                 labs(title = "Acid-neutralizing capacity",
                      x = "Titration Date",
                      y = "ANC mg/L") +
-                scale_x_datetime(date_breaks = "6 months") +
+                scale_x_datetime(date_breaks = "3 months") +
                 theme_bw() +
                 theme(legend.title = element_blank(),
                       text = element_text(size = 14), 
